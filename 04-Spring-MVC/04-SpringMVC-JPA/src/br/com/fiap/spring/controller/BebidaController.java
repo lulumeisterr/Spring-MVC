@@ -1,8 +1,6 @@
 package br.com.fiap.spring.controller;
 
-import java.util.ArrayList;
-
-import javax.websocket.server.PathParam;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.fiap.jpa.dao.BebidaDAO;
+import br.com.fiap.jpa.exception.KeyNotFoundException;
 import br.com.fiap.spring.model.Bebida;
 
 @Controller
@@ -22,6 +21,7 @@ import br.com.fiap.spring.model.Bebida;
 public class BebidaController {
 	
 	// Aplicar o componente na classe implDAO
+	// Tras a instancia da DAO
 	@Autowired
 	private BebidaDAO dao;
 	
@@ -29,7 +29,38 @@ public class BebidaController {
 	public String index() {
 		return "index";
 	}
+	
+	//Buscar
+	
+	@GetMapping("listar")
+	public List<Bebida> Buscar(String nome) {
+		return dao.buscarPorNome(nome);
+	}
 
+	// transaction faz o commit
+	@Transactional
+	@PostMapping("remover")
+	public String excluir(int codigo ,  RedirectAttributes r) {
+		
+		try {
+		dao.delete(codigo);
+		r.addFlashAttribute("msg", "Bebida removida");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "redirect:/inicio/listar";
+	}
+	
+	// Usando protocoloco http e atualizando
+	// anotacao para o commit
+	@Transactional
+	@PostMapping("editar")
+	public String processarEdicao(Bebida b , RedirectAttributes r) {
+		dao.update(b);
+		r.addFlashAttribute("msg", "Bebida Atualizada");
+		return "redirect:/inicio/listar";
+	}
 	
 	// Realizar o transactional para realizar o commit
 	@Transactional

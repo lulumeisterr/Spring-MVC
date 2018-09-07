@@ -1,4 +1,7 @@
+
 package br.com.fiap.jpa.dao.impl;
+
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -7,6 +10,11 @@ import br.com.fiap.spring.model.Bebida;
 
 @Repository
 public class BebidaDAOimpl extends GenericDAOImpl<Bebida, Integer> implements BebidaDAO{
+
+	@Override
+	public List<Bebida> buscarPorNome(String nome) {
+		return em.createQuery("from Bebida where nome like  :opa",Bebida.class).setParameter("opa", "%"+nome+"%").getResultList();
+	}
 	
 	/**
 	 *  Controller camda de view

@@ -15,7 +15,7 @@ public class GenericDAOImpl<T,K>
 
 	// Realizando a gestao de independencia automaticamente do entityManager
 	@PersistenceContext
-	private EntityManager em;
+	protected EntityManager em;
 	
 	private Class<T> clazz;
 	
